@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+/**
+ * APLogToleranceScannerClass is responsible for being the entry point and managing the program.
+ */
 public class APLogToleranceScannerClass
 {
     public static void main(String[] args)
@@ -13,7 +16,11 @@ public class APLogToleranceScannerClass
         System.out.println("Welcome to the Cobb AccessPort Data Log Tolerance Scanner!");
 
         // Get user input
-        String fileName = getFileNameFromUserStreamReader();
+        ConsoleIOManager ioManager = new ConsoleIOManager();
+        String fileName = args[0];
+        if (fileName.isEmpty())
+            ioManager.getFileNameFromUserStreamReader();
+
         if (!fileName.isEmpty())
         {
             // open file
@@ -22,11 +29,15 @@ public class APLogToleranceScannerClass
             // report results
             System.out.println("Scan results for " + fileName + ":");
 
-            LogFileHandler logFileHandler = null;
+            // TODO: 3/31/2016 get monitor names from header and ask user which to scan for
+            // and what tolerances for each.
+
             try
             {
-                Monitor targetMonitor = new Monitor("MAF (g/s)", 12.0, 12.8);
-                logFileHandler = new LogFileHandler(fileName);
+                LogFileHandler logFileHandler = new LogFileHandler(fileName);
+
+                /*String targetMonitorName = */Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
+                //Monitor targetMonitor = new Monitor(targetMonitorName, 12.0, 12.8);
                 logFileHandler.scanLogFile(targetMonitor);
                 System.out.println("Scan Successful");
             }
@@ -35,29 +46,9 @@ public class APLogToleranceScannerClass
                 System.out.println("Scan failed: " + e.getMessage());
             }
         }
-    }
-
-    static String getFileNameFromUserScanner()
-    {
-        System.out.print("Enter the file path that you want to scan: ");
-        Scanner inputParser = new Scanner(System.in);   // won't return until non-blank input added...
-
-        return inputParser.next();
-    }
-    static String getFileNameFromUserStreamReader()
-    {
-        System.out.print("Enter the file path that you want to scan: ");
-        String fileName = null;
-        // wrap System.in in InputStreamReader to get character stream features
-        try (BufferedReader inputParser = new BufferedReader(new InputStreamReader(System.in)))
+        else
         {
-            fileName = inputParser.readLine();
+            System.out.println("No files to scan.");
         }
-        catch (IOException|NullPointerException e)
-        {
-            System.out.println("Input error");
-        }
-
-        return fileName;
     }
 }

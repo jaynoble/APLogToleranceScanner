@@ -4,15 +4,15 @@ package jaynoble.aplogtolerancescanner;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
- * Created by Jay on 3/25/2016.
+ * LogFileHandler class is responsible for access to a log file of whatever type
  */
 public class LogFileHandler
 {
     private String m_fileName;
     private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
+    private ArrayList<String> m_monitorNames;
 
     public LogFileHandler(String fileName) throws IOException
     {
@@ -37,6 +37,34 @@ public class LogFileHandler
         }
     }*/
 
+    // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
+    public String[] getMonitorNames()
+    {
+        // make sure to start at beginning of file...
+        String[] monitorNames = null;   // TODO: Resolve duplicate array for ArrayList
+        if (m_monitorNames == null)
+        {
+            monitorNames = m_csvFileHandler.scanCSVFileHeader();
+            m_monitorNames = new ArrayList<>();    // don't know capacity - #names
+            for (String name : monitorNames)
+                m_monitorNames.add(name);
+        }
+        else
+        {
+            monitorNames = m_monitorNames.toArray(new String[0]);
+        }
+        return monitorNames;
+    }
+
+    /*public void printMonitorNames()
+    {
+        System.out.print("Monitor names: ");
+        if (m_monitorNames == null)
+            getMonitorNames();
+        for (String monitorName : m_monitorNames)
+            System.out.print(monitorName + ", ");
+    }*/
+
     public void scanLogFile(Monitor targetMonitor) throws IOException
     {
         // open the file?
@@ -44,7 +72,7 @@ public class LogFileHandler
         // close the file?
 
         // find any matching monitors TODO: store in hashSet/Map for faster lookup?
-        String[] headerNames = m_csvFileHandler.scanCSVFileHeader();
+        String[] headerNames = getMonitorNames();
         boolean matchFound = false;
         for (int nameIndex = 0; !matchFound && (nameIndex < headerNames.length); ++nameIndex)
         {

@@ -40,9 +40,9 @@ public class CSVFileHandler
 
         String[] headerNames = headerLine.split(",");
         // TODO: strip out units "(any symbol/char)"
-        System.out.print("Found header names:");
+        /*System.out.print("Found header names:");
         for (String name : headerNames)
-            System.out.print(" " + name);
+            System.out.print(" " + name);*/
         return headerNames;
     }
 
