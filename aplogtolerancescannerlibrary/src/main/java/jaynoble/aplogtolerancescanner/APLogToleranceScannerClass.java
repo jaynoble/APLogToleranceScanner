@@ -34,7 +34,7 @@ public class APLogToleranceScannerClass
 
             try
             {
-                LogFileHandler logFileHandler = new LogFileHandler(fileName);
+                LogFileHandler logFileHandler = LogFileHandler.newInstance(fileName);
 
                 /*String targetMonitorName = */Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
                 //Monitor targetMonitor = new Monitor(targetMonitorName, 12.0, 12.8);

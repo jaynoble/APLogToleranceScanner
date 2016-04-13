@@ -14,13 +14,19 @@ public class LogFileHandler
     private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
     private ArrayList<String> m_monitorNames;
 
-    public LogFileHandler(String fileName) throws IOException
+    // prefer static factory method over public constructor
+    public static LogFileHandler newInstance(String fileName) throws IOException
+    {
+        return new LogFileHandler(fileName);
+    }
+
+    private LogFileHandler(String fileName) throws IOException
     {
         // save the file name
         m_fileName = fileName;
 
         // could make this a factory if/when other file types come into play
-        m_csvFileHandler = new CSVFileHandler(m_fileName);  // allow throw to pass through here uncaught...
+        m_csvFileHandler = CSVFileHandler.newInstance(m_fileName);  // allow throw to pass through here uncaught...
     }
 
     // call from client if exception thrown

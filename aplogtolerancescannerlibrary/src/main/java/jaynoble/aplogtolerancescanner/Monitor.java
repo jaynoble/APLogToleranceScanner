@@ -11,7 +11,13 @@ public class Monitor
     private double m_max;
     private int m_columnNumber;
 
-    public Monitor(String name, double min, double max)
+    // prefer static factory method over public constructor
+    public static Monitor newInstance(String name, double min, double max)
+    {
+        return new Monitor(name, min, max);
+    }
+
+    private Monitor(String name, double min, double max)
     {
         this.m_name = name;
         this.m_min = min;

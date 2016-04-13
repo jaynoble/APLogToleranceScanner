@@ -15,7 +15,13 @@ public class CSVFileHandler
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
 
-    public CSVFileHandler(String fileName) throws IOException
+    // prefer static factory method over public constructor
+    public static CSVFileHandler newInstance(String fileName) throws IOException
+    {
+        return new CSVFileHandler(fileName);
+    }
+
+    private CSVFileHandler(String fileName) throws IOException
     {
         m_fileName = fileName;
         try

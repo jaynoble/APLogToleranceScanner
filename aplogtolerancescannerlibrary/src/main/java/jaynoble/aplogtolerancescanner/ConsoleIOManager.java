@@ -77,6 +77,6 @@ public class ConsoleIOManager
             System.out.println("Input error");
         }*/
 
-        return new Monitor(monitorName, min, max);
+        return Monitor.newInstance(monitorName, min, max);
     }
 }
