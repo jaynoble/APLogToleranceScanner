@@ -2,6 +2,7 @@ package jaynoble.aplogtolerancescanner;
 
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -10,24 +11,22 @@ import java.util.ArrayList;
  */
 public class LogFileHandler
 {
-    private String m_fileName;
     private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
     private ArrayList<String> m_monitorNames;
 
     // prefer static factory method over public constructor
-    public static LogFileHandler newInstance(String fileName) throws IOException
+    public static LogFileHandler newInstance(BufferedReader reader)
     {
-        return new LogFileHandler(fileName);
+        return new LogFileHandler(reader);
     }
 
-    private LogFileHandler(String fileName) throws IOException
+    private LogFileHandler(BufferedReader reader)
     {
-        // save the file name
-        m_fileName = fileName;
-
         // could make this a factory if/when other file types come into play
-        m_csvFileHandler = CSVFileHandler.newInstance(m_fileName);  // allow throw to pass through here uncaught...
+        m_csvFileHandler = CSVFileHandler.newInstance(reader);
     }
+
+
 
     // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
     public String[] getMonitorNames()

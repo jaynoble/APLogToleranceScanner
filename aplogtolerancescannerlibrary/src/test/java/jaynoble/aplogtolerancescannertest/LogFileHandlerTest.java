@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.junit.internal.runners.statements.ExpectException;
 import org.junit.rules.ExpectedException;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.StringReader;
 
 import jaynoble.aplogtolerancescanner.LogFileHandler;
 
@@ -32,12 +34,16 @@ public class LogFileHandlerTest
     }
 
     @org.junit.Test
-    public void testNewInstanceThrowsOnBadFileName() throws Exception
+   /* public void testNewInstanceThrowsOnBadFileName() throws Exception
     {
         // should throw if file not found
         String badFileName = "badFile.ext";
         exception.expect(FileNotFoundException.class);
         LogFileHandler logFileHandler = LogFileHandler.newInstance(badFileName);
+    }*/
+    public void testNewInstance() throws Exception
+    {
+        LogFileHandler logFileHandler = LogFileHandler.newInstance(new BufferedReader(new StringReader("")));
     }
 
     @org.junit.Test

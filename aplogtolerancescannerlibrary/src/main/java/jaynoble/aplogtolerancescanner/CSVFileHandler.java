@@ -10,33 +10,22 @@ import java.util.Scanner;
  */
 public class CSVFileHandler
 {
-    private String m_fileName;
     private BufferedReader m_fileReader;
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
 
     // prefer static factory method over public constructor
-    public static CSVFileHandler newInstance(String fileName) throws IOException
+    public static CSVFileHandler newInstance(BufferedReader reader)
     {
-        return new CSVFileHandler(fileName);
+        return new CSVFileHandler(reader);
     }
 
-    private CSVFileHandler(String fileName) throws IOException
+    private CSVFileHandler(BufferedReader reader)
     {
-        m_fileName = fileName;
-        try
-        {
-            m_fileReader = new BufferedReader(new FileReader(m_fileName));
-            System.out.println("Opening file " + m_fileName + "...");
-            m_fileScanner = new Scanner(m_fileReader);
-            m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
-            m_row = 0;
-        }
-        catch (IOException e)   // TODO: tighten exception catch/throw
-        {
-            System.out.println("Failed to open file " + m_fileName + "...");
-            throw e;    // pass it on to the client
-        }
+        m_fileReader = reader;
+        m_fileScanner = new Scanner(m_fileReader);
+        m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
+        m_row = 0;
     }
 
     public String[] scanCSVFileHeader()

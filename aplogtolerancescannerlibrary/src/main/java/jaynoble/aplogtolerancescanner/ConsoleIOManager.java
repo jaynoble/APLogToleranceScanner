@@ -20,7 +20,7 @@ public class ConsoleIOManager
             fileName = inputParser.readLine();
             inputParser.close();
         }
-        catch (IOException |NullPointerException e)
+        catch (IOException | NullPointerException e)
         {
             System.out.println("Input error");
         }
