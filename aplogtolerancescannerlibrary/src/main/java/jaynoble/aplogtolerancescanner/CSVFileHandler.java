@@ -76,5 +76,3 @@ public class CSVFileHandler
         return !m_fileScanner.hasNextLine();
     }
 }
-
-

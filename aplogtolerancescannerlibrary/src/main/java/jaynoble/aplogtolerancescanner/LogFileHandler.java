@@ -29,20 +29,6 @@ public class LogFileHandler
         m_csvFileHandler = CSVFileHandler.newInstance(m_fileName);  // allow throw to pass through here uncaught...
     }
 
-    // call from client if exception thrown
-    // Need a way to enforce this - try/catch/finally in each local method?
-/*    public static void cleanup()
-    {
-        try
-        {
-            if (m_fileReader != null)
-                m_fileReader.close();
-        }
-        catch (IOException e)
-        {
-        }
-    }*/
-
     // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
     public String[] getMonitorNames()
     {
@@ -51,7 +37,7 @@ public class LogFileHandler
         if (m_monitorNames == null)
         {
             monitorNames = m_csvFileHandler.scanCSVFileHeader();
-            m_monitorNames = new ArrayList<>();    // don't know capacity - #names
+            m_monitorNames = new ArrayList<>();    // don't yet know capacity - #names
             for (String name : monitorNames)
                 m_monitorNames.add(name);
         }
@@ -60,6 +46,19 @@ public class LogFileHandler
             monitorNames = m_monitorNames.toArray(new String[0]);
         }
         return monitorNames;
+    }
+
+    // strip out "(units)" from "name (units)"
+    public static String[] stripUnits(String[] monitorNamesWithUnits)
+    {
+        String[] namesNoUnits = new String[monitorNamesWithUnits.length];
+        int i = 0;
+        final String UNIT_REGEX = "\\s\\(.*\\)";
+        for (String name : monitorNamesWithUnits)
+        {
+            namesNoUnits[i++] = name.replaceFirst(UNIT_REGEX, "");;
+        }
+        return namesNoUnits;
     }
 
     /*public void printMonitorNames()
