@@ -6,11 +6,14 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 /**
- * ConsoleIOManager is responsible for console i/o interactions with the user.
+ * ConsoleInputParser is responsible for console i/o interactions with the user.
  */
-public class ConsoleIOManager
+public class ConsoleInputParser implements InputParserInterface
 {
-    String getFileNameFromUserStreamReader()
+    private String logFileName;
+
+    @Override
+    public String[] getLogFileNames()
     {
         System.out.print("Enter the file path that you want to scan: ");
         String fileName = null;
@@ -25,25 +28,22 @@ public class ConsoleIOManager
             System.out.println("Input error");
         }
 
-        return fileName;
+        String[] logFileNames = {fileName};
+        return logFileNames;
     }
 
-    /*String*/Monitor getMonitorFromUser(String[] monitorNames) throws IOException
+    private Monitor getMonitorFromUser(Scanner monitorScanner, int monitorListCount) throws IOException
     {
         String monitorName = null;
         float min = 0;
         float max = 0;
 
-        System.out.println("Monitor names are: ");
-        for (int i = 1; i < monitorNames.length; ++i)
-            System.out.println(i + ": " + monitorNames[i-1]);
-        System.out.print("Enter the number of the monitor to scan for: ");  // TODO: 4/3/2016 0 to cancel?
-
         //try (BufferedReader userMonitorReader = new BufferedReader(new InputStreamReader(System.in)))
         //{
             //String userInputString = userMonitorReader.readLine();
             // int monitorNumber = Integer.parseInt(userInputString);
-            Scanner monitorScanner = new Scanner(System.in);
+
+
             // validate user selection
             if (monitorScanner.hasNextInt())
             {
@@ -51,6 +51,8 @@ public class ConsoleIOManager
 
                 if (1 <= monitorNumber && monitorNumber <= monitorNames.length)
                     monitorName = monitorNames[monitorNumber - 1];
+                else if (0 == monitorNumber)
+                    done = true;
                 else
                     System.out.print("Invalid choice. Please choose again: ");
             }
@@ -78,5 +80,25 @@ public class ConsoleIOManager
         }*/
 
         return Monitor.newInstance(monitorName, min, max);
+    }
+
+    @Override
+    public Monitor getMonitors()
+    {
+        // list monitors
+        System.out.println("Monitor names are: ");
+        for (int i = 1; i < monitorNames.length; ++i)
+            System.out.println(i + ": " + monitorNames[i-1]);
+        System.out.print("Enter the number of the monitor to scan for (0 when done): ");
+
+        Scanner monitorScanner = new Scanner(System.in);
+        boolean done = false;
+        while (!done)
+        {
+            // get a monitor and range
+            Monitor = getMonitorFromUser(monitorScanner);
+            done = true;
+        }
+        return Monitor;
     }
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * LogFileHandler class is responsible for access to a log file of whatever type
  */
-public class LogFileHandler
+public class LogFileHandler implements LogFileHandlerInterface
 {
     private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
     private ArrayList<String> m_monitorNames;

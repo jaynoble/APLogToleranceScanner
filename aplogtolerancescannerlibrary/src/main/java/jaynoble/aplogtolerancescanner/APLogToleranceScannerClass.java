@@ -3,8 +3,6 @@ package jaynoble.aplogtolerancescanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
 
 /**
  * APLogToleranceScannerClass is responsible for being the entry point and managing the program.
@@ -17,12 +15,17 @@ public class APLogToleranceScannerClass
         System.out.println("Welcome to the Cobb AccessPort Data Log Tolerance Scanner!");
 
         // Get user input
-        ConsoleIOManager ioManager = new ConsoleIOManager();
-        String fileName = "";
+        InputParserInterface inputParser;
+
         if (args.length > 0)
-            fileName = args[0];
-        if (fileName.isEmpty())
-            fileName = ioManager.getFileNameFromUserStreamReader();
+            inputParser = new CommandLineInputParser(args); // get input from command line arguments
+            //fileName = args[0];
+        else
+            inputParser = new ConsoleInputParser(); // get input from console
+        String[] logFileNames = inputParser.getLogFileNames();
+        String fileName = logFileNames[0];  // for now...
+        /*if (fileName.isEmpty())
+            fileName = inputParser.getFileNameFromUserStreamReader();*/
 
         if (!fileName.isEmpty())
         {
@@ -40,7 +43,7 @@ public class APLogToleranceScannerClass
 
                 // Get monitor names from header and ask user which to scan for
                 // and what tolerances for each.
-                /*String targetMonitorName = */Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
+                /*String targetMonitorName = */Monitor targetMonitor = inputParser.getMonitorFromUser(logFileHandler.getMonitorNames());
 
                 logFileHandler.scanLogFile(targetMonitor);
                 System.out.println("Scan Successful");
