@@ -1,19 +1,29 @@
 package jaynoble.aplogtolerancescanner;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+/**
+ * APLogToleranceScannerClass is responsible for being the entry point and managing the program.
+ */
 public class APLogToleranceScannerClass
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         // Welcome message
         System.out.println("Welcome to the Cobb AccessPort Data Log Tolerance Scanner!");
 
         // Get user input
-        String fileName = getFileNameFromUserStreamReader();
+        ConsoleIOManager ioManager = new ConsoleIOManager();
+        String fileName = "";
+        if (args.length > 0)
+            fileName = args[0];
+        if (fileName.isEmpty())
+            fileName = ioManager.getFileNameFromUserStreamReader();
+
         if (!fileName.isEmpty())
         {
             // open file
@@ -22,11 +32,16 @@ public class APLogToleranceScannerClass
             // report results
             System.out.println("Scan results for " + fileName + ":");
 
-            LogFileHandler logFileHandler = null;
+            BufferedReader reader = null;
             try
             {
-                Monitor targetMonitor = new Monitor("MAF (g/s)", 12.0, 12.8);
-                logFileHandler = new LogFileHandler(fileName);
+                reader = new BufferedReader(new FileReader(fileName));
+                LogFileHandler logFileHandler = LogFileHandler.newInstance(reader);
+
+                // Get monitor names from header and ask user which to scan for
+                // and what tolerances for each.
+                /*String targetMonitorName = */Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
+
                 logFileHandler.scanLogFile(targetMonitor);
                 System.out.println("Scan Successful");
             }
@@ -34,30 +49,15 @@ public class APLogToleranceScannerClass
             {
                 System.out.println("Scan failed: " + e.getMessage());
             }
+            finally
+            {
+                if (reader != null)
+                    reader.close();
+            }
         }
-    }
-
-    static String getFileNameFromUserScanner()
-    {
-        System.out.print("Enter the file path that you want to scan: ");
-        Scanner inputParser = new Scanner(System.in);   // won't return until non-blank input added...
-
-        return inputParser.next();
-    }
-    static String getFileNameFromUserStreamReader()
-    {
-        System.out.print("Enter the file path that you want to scan: ");
-        String fileName = null;
-        // wrap System.in in InputStreamReader to get character stream features
-        try (BufferedReader inputParser = new BufferedReader(new InputStreamReader(System.in)))
+        else
         {
-            fileName = inputParser.readLine();
+            System.out.println("No files to scan.");
         }
-        catch (IOException|NullPointerException e)
-        {
-            System.out.println("Input error");
-        }
-
-        return fileName;
     }
 }

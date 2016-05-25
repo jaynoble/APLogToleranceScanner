@@ -10,27 +10,22 @@ import java.util.Scanner;
  */
 public class CSVFileHandler
 {
-    private String m_fileName;
     private BufferedReader m_fileReader;
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
 
-    public CSVFileHandler(String fileName) throws IOException
+    // prefer static factory method over public constructor
+    public static CSVFileHandler newInstance(BufferedReader reader)
     {
-        m_fileName = fileName;
-        try
-        {
-            m_fileReader = new BufferedReader(new FileReader(m_fileName));
-            System.out.println("Opening file " + m_fileName + "...");
-            m_fileScanner = new Scanner(m_fileReader);
-            m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
-            m_row = 0;
-        }
-        catch (IOException e)   // TODO: tighten exception catch/throw
-        {
-            System.out.println("Failed to open file " + m_fileName + "...");
-            throw e;    // pass it on to the client
-        }
+        return new CSVFileHandler(reader);
+    }
+
+    private CSVFileHandler(BufferedReader reader)
+    {
+        m_fileReader = reader;
+        m_fileScanner = new Scanner(m_fileReader);
+        m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
+        m_row = 0;
     }
 
     public String[] scanCSVFileHeader()
@@ -40,9 +35,9 @@ public class CSVFileHandler
 
         String[] headerNames = headerLine.split(",");
         // TODO: strip out units "(any symbol/char)"
-        System.out.print("Found header names:");
+        /*System.out.print("Found header names:");
         for (String name : headerNames)
-            System.out.print(" " + name);
+            System.out.print(" " + name);*/
         return headerNames;
     }
 
@@ -70,5 +65,3 @@ public class CSVFileHandler
         return !m_fileScanner.hasNextLine();
     }
 }
-
-

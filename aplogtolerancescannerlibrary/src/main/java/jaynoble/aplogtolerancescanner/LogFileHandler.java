@@ -2,39 +2,71 @@ package jaynoble.aplogtolerancescanner;
 
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
- * Created by Jay on 3/25/2016.
+ * LogFileHandler class is responsible for access to a log file of whatever type
  */
 public class LogFileHandler
 {
-    private String m_fileName;
     private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
+    private ArrayList<String> m_monitorNames;
 
-    public LogFileHandler(String fileName) throws IOException
+    // prefer static factory method over public constructor
+    public static LogFileHandler newInstance(BufferedReader reader)
     {
-        // save the file name
-        m_fileName = fileName;
-
-        // could make this a factory if/when other file types come into play
-        m_csvFileHandler = new CSVFileHandler(m_fileName);  // allow throw to pass through here uncaught...
+        return new LogFileHandler(reader);
     }
 
-    // call from client if exception thrown
-    // Need a way to enforce this - try/catch/finally in each local method?
-/*    public static void cleanup()
+    private LogFileHandler(BufferedReader reader)
     {
-        try
+        // could make this a factory if/when other file types come into play
+        m_csvFileHandler = CSVFileHandler.newInstance(reader);
+    }
+
+
+
+    // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
+    public String[] getMonitorNames()
+    {
+        // make sure to start at beginning of file...
+        String[] monitorNames = null;   // TODO: Resolve duplicate array for ArrayList
+        if (m_monitorNames == null)
         {
-            if (m_fileReader != null)
-                m_fileReader.close();
+            monitorNames = m_csvFileHandler.scanCSVFileHeader();
+            m_monitorNames = new ArrayList<>();    // don't yet know capacity - #names
+            for (String name : monitorNames)
+                m_monitorNames.add(name);
         }
-        catch (IOException e)
+        else
         {
+            monitorNames = m_monitorNames.toArray(new String[0]);
         }
+        return monitorNames;
+    }
+
+    // strip out "(units)" from "name (units)"
+    public static String[] stripUnits(String[] monitorNamesWithUnits)
+    {
+        String[] namesNoUnits = new String[monitorNamesWithUnits.length];
+        int i = 0;
+        final String UNIT_REGEX = "\\s\\(.*\\)";
+        for (String name : monitorNamesWithUnits)
+        {
+            namesNoUnits[i++] = name.replaceFirst(UNIT_REGEX, "");;
+        }
+        return namesNoUnits;
+    }
+
+    /*public void printMonitorNames()
+    {
+        System.out.print("Monitor names: ");
+        if (m_monitorNames == null)
+            getMonitorNames();
+        for (String monitorName : m_monitorNames)
+            System.out.print(monitorName + ", ");
     }*/
 
     public void scanLogFile(Monitor targetMonitor) throws IOException
@@ -44,7 +76,7 @@ public class LogFileHandler
         // close the file?
 
         // find any matching monitors TODO: store in hashSet/Map for faster lookup?
-        String[] headerNames = m_csvFileHandler.scanCSVFileHeader();
+        String[] headerNames = getMonitorNames();
         boolean matchFound = false;
         for (int nameIndex = 0; !matchFound && (nameIndex < headerNames.length); ++nameIndex)
         {

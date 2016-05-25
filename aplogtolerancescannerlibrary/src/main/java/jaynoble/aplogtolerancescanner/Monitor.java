@@ -1,17 +1,26 @@
 package jaynoble.aplogtolerancescanner;
 
+
 /**
  * Monitor is responsible for containing information for the AP monitor that is being tracked
  * and any violations to the tolerance that is set.
  */
 public class Monitor
 {
-    private String m_name;
-    private double m_min;
-    private double m_max;
+    private final String m_name;
+    private final double m_min;
+    private final double m_max;
     private int m_columnNumber;
 
-    public Monitor(String name, double min, double max)
+    // prefer static factory method over public constructor
+    public static Monitor newInstance(String name, double min, double max) throws IllegalArgumentException
+    {
+        if (min > max)
+            throw new IllegalArgumentException("min must be <= max");
+        return new Monitor(name, min, max);
+    }
+
+    private Monitor(String name, double min, double max)
     {
         this.m_name = name;
         this.m_min = min;
@@ -24,8 +33,10 @@ public class Monitor
         return this.m_name;
     }
 
-    public void setColumnNumber(int columnNumber)
+    public void setColumnNumber(int columnNumber) throws IllegalArgumentException
     {
+        if (columnNumber < 0)
+            throw new IllegalArgumentException("columnNumber must be >= 0");
         this.m_columnNumber = columnNumber;
     }
 

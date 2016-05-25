@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/APLogToleranceScannerApplication.iml" filepath="$PROJECT_DIR$/APLogToleranceScannerApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/APLogToleranceScanner.iml" filepath="$PROJECT_DIR$/APLogToleranceScanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/aplogtolerancescannerlibrary/aplogtolerancescannerlibrary.iml" filepath="$PROJECT_DIR$/aplogtolerancescannerlibrary/aplogtolerancescannerlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
