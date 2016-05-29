@@ -17,47 +17,52 @@ public class APLogToleranceScannerClass
         System.out.println("Welcome to the Cobb AccessPort Data Log Tolerance Scanner!");
 
         // Get user input
-        ConsoleIOManager ioManager = new ConsoleIOManager();
-        String fileName = "";
-        if (args.length > 0)
-            fileName = args[0];
-        if (fileName.isEmpty())
-            fileName = ioManager.getFileNameFromUserStreamReader();
-
-        if (!fileName.isEmpty())
+        // wrap System.in in InputStreamReader to get character stream features
+        // use a try-with-resources statement to declare the BufferedReader since it will auto-close
+        // when it leaves scope so no need to close in a finally block
+        try (BufferedReader inputParser = new BufferedReader(new InputStreamReader(System.in)))
         {
-            // open file
-            // scan file
-            // close file
-            // report results
-            System.out.println("Scan results for " + fileName + ":");
+            ConsoleIOManager ioManager = new ConsoleIOManager(inputParser);
+            String fileName = "";
+            if (args.length > 0)
+                fileName = args[0];
+            if (fileName.isEmpty())
+                fileName = ioManager.getFileNameFromUserStreamReader();
 
-            BufferedReader reader = null;
-            try
+            if (!fileName.isEmpty())
             {
-                reader = new BufferedReader(new FileReader(fileName));
-                LogFileHandler logFileHandler = LogFileHandler.newInstance(reader);
+                // open file
+                // scan file
+                // close file
+                // report results
+                System.out.println("Scan results for " + fileName + ":");
 
-                // Get monitor names from header and ask user which to scan for
-                // and what tolerances for each.
-                /*String targetMonitorName = */Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
+                try (BufferedReader reader = new BufferedReader(new FileReader(fileName)))
+                {
+                    LogFileHandler logFileHandler = LogFileHandler.newInstance(reader);
 
-                logFileHandler.scanLogFile(targetMonitor);
-                System.out.println("Scan Successful");
+                    // Get monitor names from header and ask user which to scan for
+                    // and what tolerances are acceptable.
+                    Monitor targetMonitor = ioManager.getMonitorFromUser(logFileHandler.getMonitorNames());
+
+                    logFileHandler.scanLogFile(targetMonitor);
+                    System.out.println("Scan Successful");
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Scan failed: " + e.getMessage());
+                }
             }
-            catch (IOException e)
+            else
             {
-                System.out.println("Scan failed: " + e.getMessage());
+                System.out.println("No files to scan.");
             }
-            finally
-            {
-                if (reader != null)
-                    reader.close();
-            }
+
         }
-        else
+        catch (IOException | NullPointerException e)
         {
-            System.out.println("No files to scan.");
+            System.out.println("Input error");
+            System.exit(1);
         }
     }
 }
