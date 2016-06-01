@@ -39,7 +39,7 @@ public class CommandLineInputParser implements InputParserInterface
     }
 
     @Override
-    public Monitor getMonitors()
+    public Monitor getMonitors(String[] monitorNames)
     {
         // get Monitor(s) from the monitor file
         // open monitor file

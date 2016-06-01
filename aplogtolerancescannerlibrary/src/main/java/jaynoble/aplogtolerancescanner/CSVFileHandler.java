@@ -10,6 +10,7 @@ import java.util.Scanner;
  */
 public class CSVFileHandler
 {
+    static final int INVALID_ROW = 0;
     private BufferedReader m_fileReader;
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
@@ -25,12 +26,21 @@ public class CSVFileHandler
         m_fileReader = reader;
         m_fileScanner = new Scanner(m_fileReader);
         m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
-        m_row = 0;
+        m_row = INVALID_ROW;
     }
 
     public String[] scanCSVFileHeader()
     {
-        // assumes at beginning of file...
+        // make sure at beginning of file...
+        try
+        {
+            m_fileReader.reset();
+            m_row = INVALID_ROW;
+        }
+        catch (IOException e)
+        {
+            System.out.println("Error: Can't reset file: " + e.getMessage());
+        }
         String headerLine = readRow();
 
         String[] headerNames = headerLine.split(",");

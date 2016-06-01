@@ -11,8 +11,8 @@ import java.util.ArrayList;
  */
 public class LogFileHandler implements LogFileHandlerInterface
 {
-    private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
-    private ArrayList<String> m_monitorNames;
+    private CSVFileHandler m_csvFileHandler = null; // Don't want this static - then only 1 instance
+    private ArrayList<String> m_monitorNames = null;
 
     // prefer static factory method over public constructor
     public static LogFileHandler newInstance(BufferedReader reader)
