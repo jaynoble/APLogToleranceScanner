@@ -36,8 +36,9 @@ public class APLogToleranceScannerClass
                 {
                     LogFileHandler logFileHandler = LogFileHandler.newInstance(reader);
                     String[] monitorNames = logFileHandler.getMonitorNames();
-                    inputParser.getMonitors(monitorNames);
+                    Monitor monitorToScan = inputParser.getMonitors(monitorNames);
                     // scan file
+                    logFileHandler.scanLogFile(monitorToScan);
                     // close file
                 }
                 catch (IOException e)
@@ -54,25 +55,6 @@ public class APLogToleranceScannerClass
             System.out.println("Please try again.");
             printHelp();
         }
-        /*if (fileName.isEmpty())
-            fileName = inputParser.getFileNameFromUserStreamReader();*/
-
-
-
-
-
-        // Get monitor names from header and ask user which to scan for
-        // and what tolerances for each.
-        /*String targetMonitorName = */
-        /*
-        Monitor targetMonitor = inputParser.getMonitorFromUser(logFileHandler.getMonitorNames());
-
-
-            logFileHandler.scanLogFile(targetMonitor);
-            System.out.println("Scan Successful");
-        }
-        catch
-        */
     }
 
 

@@ -12,6 +12,7 @@ public class CSVFileHandler
 {
     static final int INVALID_ROW = 0;
     private BufferedReader m_fileReader;
+    private boolean m_canResetFile;
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
 
@@ -27,19 +28,37 @@ public class CSVFileHandler
         m_fileScanner = new Scanner(m_fileReader);
         m_fileScanner.useDelimiter(",\\s"); // delimiter = ',' and all whitespace characters(?) TODO: evaluate whitespace parsing
         m_row = INVALID_ROW;
+
+        // mark the file, assuming that this object was created with a reader that's at the beginning of the file
+        if (m_fileReader.markSupported())
+        {
+            try
+            {
+                m_fileReader.mark(10000);
+                m_canResetFile = true;
+            }
+            catch (IOException e)
+            {
+                m_canResetFile = false;
+            }
+        }
+        else
+            m_canResetFile = false;
     }
 
     public String[] scanCSVFileHeader()
     {
-        // make sure at beginning of file...
-        try
+        // make sure at beginning of file if possible...
+        if (m_canResetFile)
         {
-            m_fileReader.reset();
-            m_row = INVALID_ROW;
-        }
-        catch (IOException e)
-        {
-            System.out.println("Error: Can't reset file: " + e.getMessage());
+            try
+            {
+                m_fileReader.reset();
+                m_row = INVALID_ROW;
+            } catch (IOException e)
+            {
+                System.out.println("Error: Can't reset file: " + e.getMessage());
+            }
         }
         String headerLine = readRow();
 

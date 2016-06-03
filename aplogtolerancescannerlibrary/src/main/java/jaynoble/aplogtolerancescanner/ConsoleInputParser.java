@@ -38,6 +38,7 @@ public class ConsoleInputParser implements InputParserInterface
         return fileNames;
     }
 
+    // return 1-based choice (0 to cancel)
     private int getMonitorChoice(Scanner monitorScanner, int monitorListCount) throws IOException
     {
         System.out.print("Enter the number of a monitor to scan for: ");
@@ -58,13 +59,15 @@ public class ConsoleInputParser implements InputParserInterface
         return choice;
     }
 
-    private void getMonitorTolerance(Scanner toleranceScanner, float min, float max) throws IOException
+    private MinMax getMonitorTolerance() throws IOException
     {
         // get the tolerance min/max
-        System.out.println("Enter the minimum allowed tolerance: ");
-        min = Float.parseFloat(m_inputParser.readLine());
-        System.out.println("Enter the maximum allowed tolerance: ");
-        max = Float.parseFloat(m_inputParser.readLine());
+        System.out.print("Enter the minimum allowed tolerance: ");
+        float min = Float.parseFloat(m_inputParser.readLine());
+        System.out.print("Enter the maximum allowed tolerance: ");
+        float max = Float.parseFloat(m_inputParser.readLine());
+
+        return new MinMax(min, max);
     }
 
     /*
@@ -106,25 +109,54 @@ public class ConsoleInputParser implements InputParserInterface
 
         Scanner monitorScanner = new Scanner(System.in);
         String name = null;
-        float min = 0;
-        float max = 0;
         boolean done = false;
+        MinMax minMax = null;
         while (!done)
         {
             // get a monitor and range
             try
             {
                 int nameIndex = getMonitorChoice(monitorScanner, monitorNames.length);
-                name = monitorNames[nameIndex];
-                getMonitorTolerance(monitorScanner, min, max);
+                if (nameIndex > 0)
+                {
+                    name = monitorNames[nameIndex-1];
+                    minMax = getMonitorTolerance();
+                }
+                else
+                {
+                    done = true;
+                }
             }
             catch (IOException e)
             {
+                done = true;
             }
-
-            //Monitor = getMonitorFromUser(monitorScanner);
-            done = true;
+            done = true;    // temporary 1-time
         }
-        return Monitor.newInstance(name, min, max);
+        return Monitor.newInstance(name, minMax.getMin(), minMax.getMax());
+    }
+
+    // helper class to simply store min/max
+    private class MinMax
+    {
+        private final float m_min;
+        private final float m_max;
+
+        public MinMax(float min, float max)
+        {
+            m_min = min;
+            m_max = max;
+        }
+
+        public float getMin()
+        {
+            return m_min;
+        }
+
+        public float getMax()
+        {
+            return m_max;
+        }
     }
 }
+

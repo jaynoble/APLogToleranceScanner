@@ -26,12 +26,8 @@ public class LogFileHandler implements LogFileHandlerInterface
         m_csvFileHandler = CSVFileHandler.newInstance(reader);
     }
 
-
-
-    // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
     public String[] getMonitorNames()
     {
-        // make sure to start at beginning of file...
         String[] monitorNames = null;   // TODO: Resolve duplicate array for ArrayList
         if (m_monitorNames == null)
         {
@@ -54,9 +50,8 @@ public class LogFileHandler implements LogFileHandlerInterface
         int i = 0;
         final String UNIT_REGEX = "\\s\\(.*\\)";
         for (String name : monitorNamesWithUnits)
-        {
             namesNoUnits[i++] = name.replaceFirst(UNIT_REGEX, "");;
-        }
+
         return namesNoUnits;
     }
 
@@ -71,16 +66,11 @@ public class LogFileHandler implements LogFileHandlerInterface
 
     public void scanLogFile(Monitor targetMonitor) throws IOException
     {
-        // open the file?
-        // read each line
-        // close the file?
-
         // find any matching monitors TODO: store in hashSet/Map for faster lookup?
-        String[] headerNames = getMonitorNames();
         boolean matchFound = false;
-        for (int nameIndex = 0; !matchFound && (nameIndex < headerNames.length); ++nameIndex)
+        for (int nameIndex = 0; !matchFound && (nameIndex < m_monitorNames.size()); ++nameIndex)
         {
-            if (targetMonitor.name().equals(headerNames[nameIndex]))
+            if (targetMonitor.name().equals(m_monitorNames.get(nameIndex)))
             {
                 matchFound = true;
                 targetMonitor.setColumnNumber(nameIndex);   // TODO: specific to csv...
