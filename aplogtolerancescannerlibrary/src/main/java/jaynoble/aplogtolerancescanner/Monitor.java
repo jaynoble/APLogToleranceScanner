@@ -8,19 +8,19 @@ package jaynoble.aplogtolerancescanner;
 public class Monitor
 {
     private final String m_name;
-    private final double m_min;
-    private final double m_max;
+    private final float m_min;
+    private final float m_max;
     private int m_columnNumber;
 
     // prefer static factory method over public constructor
-    public static Monitor newInstance(String name, double min, double max) throws IllegalArgumentException
+    public static Monitor newInstance(String name, float min, float max) throws IllegalArgumentException
     {
         if (min > max)
             throw new IllegalArgumentException("min must be <= max");
         return new Monitor(name, min, max);
     }
 
-    private Monitor(String name, double min, double max)
+    private Monitor(String name, float min, float max)
     {
         this.m_name = name;
         this.m_min = min;
@@ -45,7 +45,7 @@ public class Monitor
         return this.m_columnNumber;
     }
 
-    public boolean outsideTolerance(double value)
+    public boolean outsideTolerance(float value)
     {
         return value < this.m_min || value > this.m_max;
     }

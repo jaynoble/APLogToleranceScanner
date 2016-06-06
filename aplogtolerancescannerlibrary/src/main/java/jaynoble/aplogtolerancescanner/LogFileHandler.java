@@ -9,10 +9,10 @@ import java.util.ArrayList;
 /**
  * LogFileHandler class is responsible for access to a log file of whatever type
  */
-public class LogFileHandler
+public class LogFileHandler implements LogFileHandlerInterface
 {
-    private CSVFileHandler m_csvFileHandler; // Don't want this static - then only 1 instance
-    private ArrayList<String> m_monitorNames;
+    private CSVFileHandler m_csvFileHandler = null;
+    private ArrayList<String> m_monitorNames = null;
 
     // prefer static factory method over public constructor
     public static LogFileHandler newInstance(BufferedReader reader)
@@ -26,12 +26,8 @@ public class LogFileHandler
         m_csvFileHandler = CSVFileHandler.newInstance(reader);
     }
 
-
-
-    // TODO: 3/31/2016 Needs to be robust so not dependent on being called only at the right time
     public String[] getMonitorNames()
     {
-        // make sure to start at beginning of file...
         String[] monitorNames = null;   // TODO: Resolve duplicate array for ArrayList
         if (m_monitorNames == null)
         {
@@ -54,9 +50,8 @@ public class LogFileHandler
         int i = 0;
         final String UNIT_REGEX = "\\s\\(.*\\)";
         for (String name : monitorNamesWithUnits)
-        {
             namesNoUnits[i++] = name.replaceFirst(UNIT_REGEX, "");;
-        }
+
         return namesNoUnits;
     }
 
@@ -71,16 +66,11 @@ public class LogFileHandler
 
     public void scanLogFile(Monitor targetMonitor) throws IOException
     {
-        // open the file?
-        // read each line
-        // close the file?
-
         // find any matching monitors TODO: store in hashSet/Map for faster lookup?
-        String[] headerNames = getMonitorNames();
         boolean matchFound = false;
-        for (int nameIndex = 0; !matchFound && (nameIndex < headerNames.length); ++nameIndex)
+        for (int nameIndex = 0; !matchFound && (nameIndex < m_monitorNames.size()); ++nameIndex)
         {
-            if (targetMonitor.name().equals(headerNames[nameIndex]))
+            if (targetMonitor.name().equals(m_monitorNames.get(nameIndex)))
             {
                 matchFound = true;
                 targetMonitor.setColumnNumber(nameIndex);   // TODO: specific to csv...
@@ -94,7 +84,7 @@ public class LogFileHandler
             System.out.println("Tolerance violations for " + targetMonitor.name() + ":");
             while (!m_csvFileHandler.eof())
             {
-                double monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.columnNumber());
+                float monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.columnNumber());
                 if (targetMonitor.outsideTolerance(monitorValue))
                 {
                     // save row, value or maybe all violating values for a row?
