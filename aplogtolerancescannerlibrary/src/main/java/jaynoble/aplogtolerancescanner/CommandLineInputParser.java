@@ -8,25 +8,40 @@ import static jaynoble.aplogtolerancescanner.Monitor.*;
  */
 public class CommandLineInputParser implements InputParserInterface
 {
-    private String logFileName;
-    private String monitorFileName;
+    private String m_logFileName;
+    private String m_monitorName;
+    private float m_monitorMin;
+    private float m_monitorMax;
 
     // public constructor
     public CommandLineInputParser(String[] args)
     {
-        assert(args.length == 2);
-        if (args.length != 2)
+        final int REQUIRED_ARG_NUM = 4;
+        // arguments should be: logfilename monitorname monitormin monitormax
+        assert(args.length == REQUIRED_ARG_NUM);
+        if (args.length != REQUIRED_ARG_NUM)
             requestInput();
         else
         {
-            logFileName = args[0];
-            monitorFileName = args[1];
+            m_logFileName = args[0];
+            m_monitorName = args[1];
+            try
+            {
+                m_monitorMin = Float.parseFloat(args[2]);
+                m_monitorMax = Float.parseFloat(args[3]);
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println("Invalid number arguments.");
+                requestInput();
+            }
         }
     }
 
+    // TODO: 6/3/2016 replace this with fail notification to parent 
     private void requestInput()
     {
-        System.out.println("Invalid command-line arguments.  Expected command: APLogToleranceScanner log_file_directory monitor_file");
+        System.out.println("Invalid command-line arguments.  Expected command: APLogToleranceScanner log_file_name monitor_name monitor_min monitor_max");
     }
 
     @Override
@@ -34,17 +49,14 @@ public class CommandLineInputParser implements InputParserInterface
     {
         // get file names from directory argument
         // TODO: 5/25/2016 Modify to get files from directory 
-        String[] logFileNames = {logFileName};
+        String[] logFileNames = {m_logFileName};
         return logFileNames;
     }
 
     @Override
     public Monitor getMonitors(String[] monitorNames)
     {
-        // get Monitor(s) from the monitor file
-        // open monitor file
-        // scan monitors
-        // return monitors
-        return newInstance("test", 0, 1);
+        // return Monitor created from command line arguments
+        return Monitor.newInstance(m_monitorName, m_monitorMin, m_monitorMax);
     }
 }

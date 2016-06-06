@@ -70,12 +70,12 @@ public class CSVFileHandler
         return headerNames;
     }
 
-    public double getValueAtColumn(int column)
+    public float getValueAtColumn(int column)
     {
         String line = readRow();
         String[] lineValues = line.split(",");
         // REQUIRE(0 <= column && column < lineValues.length)
-        return new Scanner(lineValues[column]).nextDouble();
+        return new Scanner(lineValues[column]).nextFloat();
     }
 
     public int getRow()

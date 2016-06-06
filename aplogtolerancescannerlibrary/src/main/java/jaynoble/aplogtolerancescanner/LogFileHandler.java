@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class LogFileHandler implements LogFileHandlerInterface
 {
-    private CSVFileHandler m_csvFileHandler = null; // Don't want this static - then only 1 instance
+    private CSVFileHandler m_csvFileHandler = null;
     private ArrayList<String> m_monitorNames = null;
 
     // prefer static factory method over public constructor
@@ -84,7 +84,7 @@ public class LogFileHandler implements LogFileHandlerInterface
             System.out.println("Tolerance violations for " + targetMonitor.name() + ":");
             while (!m_csvFileHandler.eof())
             {
-                double monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.columnNumber());
+                float monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.columnNumber());
                 if (targetMonitor.outsideTolerance(monitorValue))
                 {
                     // save row, value or maybe all violating values for a row?
