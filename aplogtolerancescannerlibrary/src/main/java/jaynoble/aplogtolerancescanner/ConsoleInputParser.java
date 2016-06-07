@@ -70,34 +70,6 @@ public class ConsoleInputParser implements InputParserInterface
         return new MinMax(min, max);
     }
 
-    /*
-    private Monitor getMonitorFromUser(Scanner monitorScanner, int monitorListCount) throws IOException
-    {
-        String monitorName = null;
-        float min = 0;
-        float max = 0;
-
-        System.out.print("Enter the number of a monitor to scan for: ");
-
-        String userInputString = m_inputParser.readLine();
-        int monitorNumber = Integer.parseInt(userInputString);
-
-        if (1 <= monitorNumber && monitorNumber <= monitorListCount)
-            monitorName = monitorNames[monitorNumber - 1];
-        else
-            System.out.print("Invalid choice. Please choose again: ");
-        if (monitorName != null)
-        {
-            // get the tolerance min/max
-            System.out.println("Enter the minimum allowed tolerance: ");
-            min = Float.parseFloat(m_inputParser.readLine());
-            System.out.println("Enter the maximum allowed tolerance: ");
-            max = Float.parseFloat(m_inputParser.readLine());
-        }
-
-        return Monitor.newInstance(monitorName, min, max);
-    }
-*/
     @Override
     public Monitor getMonitors(String[] monitorNames)
     {

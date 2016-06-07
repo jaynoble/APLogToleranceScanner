@@ -63,10 +63,7 @@ public class CSVFileHandler
         String headerLine = readRow();
 
         String[] headerNames = headerLine.split(",");
-        // TODO: strip out units "(any symbol/char)"
-        /*System.out.print("Found header names:");
-        for (String name : headerNames)
-            System.out.print(" " + name);*/
+
         return headerNames;
     }
 
@@ -74,7 +71,7 @@ public class CSVFileHandler
     {
         String line = readRow();
         String[] lineValues = line.split(",");
-        // REQUIRE(0 <= column && column < lineValues.length)
+        assert(0 <= column && column < lineValues.length);
         return new Scanner(lineValues[column]).nextFloat();
     }
 

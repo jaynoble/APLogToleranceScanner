@@ -17,8 +17,7 @@ public class APLogToleranceScannerClass
         System.out.println("Welcome to the " + APPTITLE + "!");
 
         // Get user input
-        InputParserInterface inputParser;
-
+        InputParserInterface inputParser = null;
         try
         {
             if (args.length > 0)
@@ -39,14 +38,18 @@ public class APLogToleranceScannerClass
                     Monitor monitorToScan = inputParser.getMonitors(monitorNames);
                     // scan file
                     logFileHandler.scanLogFile(monitorToScan);
-                    // close file
                 }
                 catch (IOException e)
                 {
-                    System.out.println("Scan of " + fileName + " failed: " + e.getMessage());
+                    throw new IOException("Scan of " + fileName + " failed: " + e.getMessage());
                 }
                 // report results
                 reportResults(fileName);
+            }
+            else
+            {
+                System.out.println("Invalid file name entry.");
+                printHelp();
             }
         }
         catch (IOException e)
@@ -62,7 +65,7 @@ public class APLogToleranceScannerClass
     {
         final String appname = "aplogtolerancescanner";
         System.out.println(APPTITLE + " usage:");
-        System.out.println("  1. " + appname + " logfile.csv OR");
+        System.out.println("  1. " + appname + " logfile.csv monitorname monitormin monitormax OR");
         System.out.println("  2. " + appname + " and follow prompts");
     }
 

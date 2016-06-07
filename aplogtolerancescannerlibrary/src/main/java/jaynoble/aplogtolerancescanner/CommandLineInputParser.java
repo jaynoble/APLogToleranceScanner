@@ -1,5 +1,7 @@
 package jaynoble.aplogtolerancescanner;
 
+import java.io.IOException;
+
 import static jaynoble.aplogtolerancescanner.Monitor.*;
 
 /**
@@ -14,13 +16,12 @@ public class CommandLineInputParser implements InputParserInterface
     private float m_monitorMax;
 
     // public constructor
-    public CommandLineInputParser(String[] args)
+    public CommandLineInputParser(String[] args) throws IOException
     {
         final int REQUIRED_ARG_NUM = 4;
         // arguments should be: logfilename monitorname monitormin monitormax
-        assert(args.length == REQUIRED_ARG_NUM);
         if (args.length != REQUIRED_ARG_NUM)
-            requestInput();
+            throw new IOException("Invalid command-line arguments.");
         else
         {
             m_logFileName = args[0];
@@ -32,22 +33,14 @@ public class CommandLineInputParser implements InputParserInterface
             }
             catch (NumberFormatException e)
             {
-                System.out.println("Invalid number arguments.");
-                requestInput();
+                throw new IOException("Invalid number arguments.");
             }
         }
     }
 
-    // TODO: 6/3/2016 replace this with fail notification to parent 
-    private void requestInput()
-    {
-        System.out.println("Invalid command-line arguments.  Expected command: APLogToleranceScanner log_file_name monitor_name monitor_min monitor_max");
-    }
-
     @Override
-    public String[] getLogFileNames()
+    public String[] getLogFileNames() throws IOException
     {
-        // get file names from directory argument
         // TODO: 5/25/2016 Modify to get files from directory 
         String[] logFileNames = {m_logFileName};
         return logFileNames;

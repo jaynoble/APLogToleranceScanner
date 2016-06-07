@@ -18,8 +18,8 @@ public class MonitorTest
     public final ExpectedException exception = ExpectedException.none();
 
     final String monitorName = "TestMonitor";
-    final double min = 7.0;
-    final double max = 22.4;
+    final float min = 7.0f;
+    final float max = 22.4f;
 
     @Test
     public void testNewInstanceThrowsOnInvalidMinMax() throws Exception
@@ -27,7 +27,7 @@ public class MonitorTest
         // Don't allow min > max
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("min must be <= max");
-        Monitor.newInstance(monitorName,max, min);
+        Monitor.newInstance(monitorName, max, min);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class MonitorTest
         Monitor testMonitor = Monitor.newInstance(monitorName, min, max);
         Assert.assertTrue(testMonitor.outsideTolerance(min-1));
         Assert.assertFalse(testMonitor.outsideTolerance(min));
-        Assert.assertFalse(testMonitor.outsideTolerance(((max-min)*.5)+min));
+        Assert.assertFalse(testMonitor.outsideTolerance(((max-min)*.5f)+min));
         Assert.assertFalse(testMonitor.outsideTolerance(max));
         Assert.assertTrue(testMonitor.outsideTolerance(max + 3));
     }

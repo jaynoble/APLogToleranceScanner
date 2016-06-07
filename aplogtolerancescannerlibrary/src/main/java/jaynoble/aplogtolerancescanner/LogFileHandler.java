@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class LogFileHandler implements LogFileHandlerInterface
 {
     private CSVFileHandler m_csvFileHandler = null;
-    private ArrayList<String> m_monitorNames = null;
+    private String[] m_monitorNames = null;
 
     // prefer static factory method over public constructor
     public static LogFileHandler newInstance(BufferedReader reader)
@@ -28,49 +28,20 @@ public class LogFileHandler implements LogFileHandlerInterface
 
     public String[] getMonitorNames()
     {
-        String[] monitorNames = null;   // TODO: Resolve duplicate array for ArrayList
         if (m_monitorNames == null)
-        {
-            monitorNames = m_csvFileHandler.scanCSVFileHeader();
-            m_monitorNames = new ArrayList<>();    // don't yet know capacity - #names
-            for (String name : monitorNames)
-                m_monitorNames.add(name);
-        }
-        else
-        {
-            monitorNames = m_monitorNames.toArray(new String[0]);
-        }
-        return monitorNames;
+            m_monitorNames = m_csvFileHandler.scanCSVFileHeader();
+
+        return m_monitorNames;
     }
 
-    // strip out "(units)" from "name (units)"
-    public static String[] stripUnits(String[] monitorNamesWithUnits)
-    {
-        String[] namesNoUnits = new String[monitorNamesWithUnits.length];
-        int i = 0;
-        final String UNIT_REGEX = "\\s\\(.*\\)";
-        for (String name : monitorNamesWithUnits)
-            namesNoUnits[i++] = name.replaceFirst(UNIT_REGEX, "");;
-
-        return namesNoUnits;
-    }
-
-    /*public void printMonitorNames()
-    {
-        System.out.print("Monitor names: ");
-        if (m_monitorNames == null)
-            getMonitorNames();
-        for (String monitorName : m_monitorNames)
-            System.out.print(monitorName + ", ");
-    }*/
 
     public void scanLogFile(Monitor targetMonitor) throws IOException
     {
         // find any matching monitors TODO: store in hashSet/Map for faster lookup?
         boolean matchFound = false;
-        for (int nameIndex = 0; !matchFound && (nameIndex < m_monitorNames.size()); ++nameIndex)
+        for (int nameIndex = 0; !matchFound && (nameIndex < m_monitorNames.length); ++nameIndex)
         {
-            if (targetMonitor.name().equals(m_monitorNames.get(nameIndex)))
+            if (targetMonitor.name().equals(m_monitorNames[nameIndex]))
             {
                 matchFound = true;
                 targetMonitor.setColumnNumber(nameIndex);   // TODO: specific to csv...
