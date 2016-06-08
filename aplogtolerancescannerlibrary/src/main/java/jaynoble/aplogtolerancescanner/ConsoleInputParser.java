@@ -20,7 +20,7 @@ public class ConsoleInputParser implements InputParserInterface
     }
 
     @Override
-    public String[] getLogFileNames() throws IOException
+    public String getLogFileName() throws IOException
     {
         System.out.print("Enter the file path that you want to scan: ");
         String fileName = null;
@@ -34,14 +34,13 @@ public class ConsoleInputParser implements InputParserInterface
             throw new IOException("Log file input error: ", e);
         }
 
-        String[] fileNames = {fileName};
-        return fileNames;
+        return fileName;
     }
 
     // return 1-based choice (0 to cancel)
     private int getMonitorChoice(Scanner monitorScanner, int monitorListCount) throws IOException
     {
-        System.out.print("Enter the number of a monitor to scan for: ");
+        System.out.print("Enter the number of the monitor to scan for (0 to quit): ");
 
         int choice = 0;
         boolean validChoice = false;
@@ -71,41 +70,44 @@ public class ConsoleInputParser implements InputParserInterface
     }
 
     @Override
-    public Monitor getMonitors(String[] monitorNames)
+    public Monitor getMonitor(String[] monitorNames) throws IOException
     {
         // list monitors
         System.out.println("Monitor names are: ");
         for (int i = 1; i < monitorNames.length; ++i)
             System.out.println(i + ": " + monitorNames[i-1]);
-        System.out.print("Enter the number of the monitor to scan for (0 when done): ");
 
         Scanner monitorScanner = new Scanner(System.in);
         String name = null;
-        boolean done = false;
         MinMax minMax = null;
-        while (!done)
+
+        // get a monitor and range
+        try
         {
-            // get a monitor and range
-            try
+            int nameIndex = getMonitorChoice(monitorScanner, monitorNames.length);
+            if ((nameIndex > 0) && (nameIndex < monitorNames.length))
             {
-                int nameIndex = getMonitorChoice(monitorScanner, monitorNames.length);
-                if (nameIndex > 0)
-                {
-                    name = monitorNames[nameIndex-1];
-                    minMax = getMonitorTolerance();
-                }
-                else
-                {
-                    done = true;
-                }
+                name = monitorNames[nameIndex-1];
+                minMax = getMonitorTolerance();
             }
-            catch (IOException e)
-            {
-                done = true;
-            }
-            done = true;    // temporary 1-time
+            else if (nameIndex == 0)    // cancel
+                throw new IOException("Cancelled operation.");
+            else
+                throw new IOException("Invalid monitor choice.");
         }
-        return Monitor.newInstance(name, minMax.getMin(), minMax.getMax());
+        catch (IOException | IllegalArgumentException e)
+        {
+            throw new IOException("Invalid monitor name or min/max value. " + e.getMessage());
+        }
+
+        try
+        {
+            return Monitor.newInstance(name, minMax.getMin(), minMax.getMax());
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IOException("Invalid monitor arguments: " + e.getMessage());
+        }
     }
 
     // helper class to simply store min/max
@@ -114,8 +116,10 @@ public class ConsoleInputParser implements InputParserInterface
         private final float m_min;
         private final float m_max;
 
-        public MinMax(float min, float max)
+        public MinMax(float min, float max) throws IllegalArgumentException
         {
+            if (Float.compare(min, max) > 0)
+                throw new IllegalArgumentException("min must be <= max");
             m_min = min;
             m_max = max;
         }

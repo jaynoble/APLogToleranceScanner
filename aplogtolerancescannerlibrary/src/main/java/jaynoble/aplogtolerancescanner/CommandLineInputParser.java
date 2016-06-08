@@ -39,17 +39,21 @@ public class CommandLineInputParser implements InputParserInterface
     }
 
     @Override
-    public String[] getLogFileNames() throws IOException
+    public String getLogFileName() throws IOException
     {
-        // TODO: 5/25/2016 Modify to get files from directory 
-        String[] logFileNames = {m_logFileName};
-        return logFileNames;
+        return m_logFileName;
     }
 
     @Override
-    public Monitor getMonitors(String[] monitorNames)
+    public Monitor getMonitor(String[] monitorNames) throws IOException
     {
-        // return Monitor created from command line arguments
-        return Monitor.newInstance(m_monitorName, m_monitorMin, m_monitorMax);
+        try
+        {
+            return Monitor.newInstance(m_monitorName, m_monitorMin, m_monitorMax);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IOException("Invalid monitor arguments: " + e.getMessage());
+        }
     }
 }

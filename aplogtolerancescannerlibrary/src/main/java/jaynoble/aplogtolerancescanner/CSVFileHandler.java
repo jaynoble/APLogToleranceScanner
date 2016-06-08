@@ -16,7 +16,7 @@ public class CSVFileHandler
     private Scanner m_fileScanner;
     private int m_row;  // 1-based row in the file
 
-    // prefer static factory method over public constructor
+    // Trying out Effective Java advice to use static factory method over public constructor
     public static CSVFileHandler newInstance(BufferedReader reader)
     {
         return new CSVFileHandler(reader);

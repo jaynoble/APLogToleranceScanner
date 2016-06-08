@@ -4,7 +4,6 @@ package jaynoble.aplogtolerancescanner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * LogFileHandler class is responsible for access to a log file of whatever type
@@ -14,7 +13,7 @@ public class LogFileHandler implements LogFileHandlerInterface
     private CSVFileHandler m_csvFileHandler = null;
     private String[] m_monitorNames = null;
 
-    // prefer static factory method over public constructor
+    // Trying out Effective Java advice to use static factory method over public constructor
     public static LogFileHandler newInstance(BufferedReader reader)
     {
         return new LogFileHandler(reader);
@@ -44,7 +43,7 @@ public class LogFileHandler implements LogFileHandlerInterface
             if (targetMonitor.name().equals(m_monitorNames[nameIndex]))
             {
                 matchFound = true;
-                targetMonitor.setColumnNumber(nameIndex);   // TODO: specific to csv...
+                targetMonitor.setDataOffset(nameIndex);
                 System.out.println("Found match for " + targetMonitor.name());
             }
         }
@@ -55,7 +54,7 @@ public class LogFileHandler implements LogFileHandlerInterface
             System.out.println("Tolerance violations for " + targetMonitor.name() + ":");
             while (!m_csvFileHandler.eof())
             {
-                float monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.columnNumber());
+                float monitorValue = m_csvFileHandler.getValueAtColumn(targetMonitor.dataOffset());
                 if (targetMonitor.outsideTolerance(monitorValue))
                 {
                     // save row, value or maybe all violating values for a row?
