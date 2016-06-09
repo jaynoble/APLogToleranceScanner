@@ -7,46 +7,48 @@ package jaynoble.aplogtolerancescanner;
  */
 public class Monitor
 {
-    private final String m_name;
-    private final float m_min;
-    private final float m_max;
-    private int m_columnNumber;
+    private final String m_name;    // this member will not change outside of construction
+    private final float m_min;      // this member will not change outside of construction
+    private final float m_max;      // this member will not change outside of construction
+    private int m_dataOffset;
 
-    // prefer static factory method over public constructor
+    // Trying out Effective Java advice to use static factory method over public constructor
     public static Monitor newInstance(String name, float min, float max) throws IllegalArgumentException
     {
-        if (min > max)
+        if (Float.compare(min, max) > 0)
             throw new IllegalArgumentException("min must be <= max");
         return new Monitor(name, min, max);
     }
 
     private Monitor(String name, float min, float max)
     {
-        this.m_name = name;
-        this.m_min = min;
-        this.m_max = max;
-        this.m_columnNumber = -1; // invalid columnNumber
+        m_name = name;
+        m_min = min;
+        m_max = max;
+        m_dataOffset = -1; // invalid offset
     }
 
     public String name()
     {
-        return this.m_name;
+        return m_name;
     }
 
-    public void setColumnNumber(int columnNumber) throws IllegalArgumentException
+    // Set the location where monitor data can be found
+    public void setDataOffset(int dataOffset) throws IllegalArgumentException
     {
-        if (columnNumber < 0)
-            throw new IllegalArgumentException("columnNumber must be >= 0");
-        this.m_columnNumber = columnNumber;
+        if (dataOffset < 0)
+            throw new IllegalArgumentException("data offset must be >= 0");
+        m_dataOffset = dataOffset;
     }
 
-    public int columnNumber()
+    public int dataOffset()
     {
-        return this.m_columnNumber;
+        return m_dataOffset;
     }
 
     public boolean outsideTolerance(float value)
     {
-        return value < this.m_min || value > this.m_max;
+        // Effective Java advises to use Float.compare to handle Nan and -0
+        return (Float.compare(value, m_min) < 0) || (Float.compare(value, m_max) > 0);
     }
 }

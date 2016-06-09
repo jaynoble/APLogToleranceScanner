@@ -17,36 +17,37 @@ public class APLogToleranceScannerClass
         System.out.println("Welcome to the " + APPTITLE + "!");
 
         // Get user input
-        InputParserInterface inputParser;
-
+        InputParserInterface inputParser = null;
         try
         {
             if (args.length > 0)
                 inputParser = new CommandLineInputParser(args); // get input from command line arguments
             else
                 inputParser = new ConsoleInputParser(); // get input from console
-            String[] logFileNames = inputParser.getLogFileNames();
-            String fileName = logFileNames[0];  // for now...
+            String logFileName = inputParser.getLogFileName();
 
-            if (!fileName.isEmpty())
+
+            if (!logFileName.isEmpty())
             {
                 // open file
                 // Use try-with-resources so BufferedReader will auto-close when it goes out of scope
-                try (BufferedReader reader = new BufferedReader(new FileReader(fileName)))
+                try (BufferedReader reader = new BufferedReader(new FileReader(logFileName)))
                 {
                     LogFileHandler logFileHandler = LogFileHandler.newInstance(reader);
                     String[] monitorNames = logFileHandler.getMonitorNames();
-                    Monitor monitorToScan = inputParser.getMonitors(monitorNames);
-                    // scan file
+                    Monitor monitorToScan = inputParser.getMonitor(monitorNames);
+                    // scan file and report results
                     logFileHandler.scanLogFile(monitorToScan);
-                    // close file
                 }
                 catch (IOException e)
                 {
-                    System.out.println("Scan of " + fileName + " failed: " + e.getMessage());
+                    throw new IOException("Scan of " + logFileName + " failed: " + e.getMessage());
                 }
-                // report results
-                reportResults(fileName);
+            }
+            else
+            {
+                System.out.println("Invalid file name entry.");
+                printHelp();
             }
         }
         catch (IOException e)
@@ -62,7 +63,7 @@ public class APLogToleranceScannerClass
     {
         final String appname = "aplogtolerancescanner";
         System.out.println(APPTITLE + " usage:");
-        System.out.println("  1. " + appname + " logfile.csv OR");
+        System.out.println("  1. " + appname + " logfile.csv monitorname monitormin monitormax OR");
         System.out.println("  2. " + appname + " and follow prompts");
     }
 

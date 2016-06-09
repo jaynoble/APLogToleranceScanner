@@ -8,8 +8,8 @@ import java.io.IOException;
 public interface InputParserInterface
 {
     // get the log file names
-    String[] getLogFileNames() throws IOException;
+    String getLogFileName() throws IOException;
 
     // get the requested monitor names and ranges
-    Monitor getMonitors(String[] monitorNames);
+    Monitor getMonitor(String[] monitorNames) throws IOException;
 }
