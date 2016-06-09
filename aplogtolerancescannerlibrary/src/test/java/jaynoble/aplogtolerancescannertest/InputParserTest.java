@@ -54,11 +54,11 @@ public class InputParserTest
     }
 
     @Test
-    public void testGetLogFileNames() throws Exception
+    public void testGetLogFileName() throws Exception
     {
         final String expectedLogFileName = "logfile.csv";
         String[] validArguments = {expectedLogFileName, "somemonitorname", "1.1", "2.2"};
         CommandLineInputParser cmdLineParserValid = new CommandLineInputParser(validArguments);
-        assertEquals(expectedLogFileName, (cmdLineParserValid.getLogFileNames())[0]);
+        assertEquals(expectedLogFileName, cmdLineParserValid.getLogFileName());
     }
 }
